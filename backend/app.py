@@ -10,13 +10,12 @@ app = Flask(__name__)
 
 
 def connect_db():
-    return sqlite3.connect('afropython.db')
+    return sqlite3.connect('../afropython.db')
 
 
-@app.route('/create', methods=['GET'])
 def create():
     g.connection = connect_db()
-    g.connection.execute('CREATE TABLE pessoa (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nome TEXT)')
+    g.connection.execute('CREATE TABLE IF NOT EXISTS pessoa (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nome TEXT)')
     return jsonify(msg='Tabela criada com sucesso!')
 
 
@@ -73,4 +72,5 @@ def delete():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    create()
 
