@@ -6,20 +6,21 @@ from flask.json import jsonify
 from flask import Flask, request, g
 import sqlite3
 
-app = Flask(__name__)
+afropython = Flask(__name__)
 
 
 def connect_db():
     return sqlite3.connect('../afropython.db')
 
 
+@afropython.route('/create', methods=['GET'])
 def create():
     g.connection = connect_db()
     g.connection.execute('CREATE TABLE IF NOT EXISTS pessoa (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nome TEXT)')
     return jsonify(msg='Tabela criada com sucesso!')
 
 
-@app.route('/pessoas', methods=['GET'])
+@afropython.route('/pessoa', methods=['GET'])
 def get():
     g.connection = connect_db()
     cur = g.connection.execute('SELECT * FROM pessoa')
@@ -28,7 +29,7 @@ def get():
     return jsonify(pessoas)
 
 
-@app.route('/pessoa', methods=['POST'])
+@afropython.route('/pessoa', methods=['POST'])
 def add():
     nome = request.form['nome']
     if nome:
@@ -41,7 +42,7 @@ def add():
         return jsonify(msg='Pessoa preta adicionada com sucesso!')
 
 
-@app.route('/pessoa', methods=['PUT'])
+@afropython.route('/pessoa', methods=['PUT'])
 def update():
     nome = request.form['nome']
     id = request.form['id']
@@ -53,10 +54,11 @@ def update():
         )
         g.connection.commit()
         g.connection.close()
-        return jsonify(msg='Nome atualizado com sucesso!')
+
+        return jsonify(msg='Nome atualizado com sucesso!'), 201
 
 
-@app.route('/pessoa', methods=['DELETE'])
+@afropython.route('/pessoa', methods=['DELETE'])
 def delete():
     id = request.form['id']
     if id:
@@ -71,6 +73,5 @@ def delete():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    create()
+    afropython.run(debug=True)
 
