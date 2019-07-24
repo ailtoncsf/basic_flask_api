@@ -13,13 +13,20 @@ class TestApp(unittest.TestCase):
         self.assertEqual(200, self.response.status_code)
 
     def test_post(self):
-        self.response = self.app_test.post('/pessoa', data = dict(nome='Python'))
+        self.response = self.app_test.post('/pessoa', data=dict(nome='Python'))
         self.assertEqual(200, self.response.status_code)
+        self.assertIn('Python', self.response.data)
 
     def test_put(self):
-        self.response = self.app_test.put('/pessoa', data = dict(id = '1', nome='Python 2'))
+        self.response = self.app_test.put('/pessoa', data=dict(id='1', nome='Python Edited'))
         self.assertEqual(201, self.response.status_code)
 
+        self.response = self.app_test.get('/pessoa')
+        self.assertIn('Python Edited', self.response.data)
+
     def test_delete(self):
-        self.response = self.app_test.delete('/pessoa', data = dict(id = '1'))
+        self.response = self.app_test.delete('/pessoa', data=dict(id='1'))
         self.assertEqual(200, self.response.status_code)
+
+        self.response = self.app_test.get('/pessoa')
+        self.assertIn('[]', self.response.data)
