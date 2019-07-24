@@ -21,9 +21,18 @@ def create():
 
 
 @afropython.route('/pessoa', methods=['GET'])
-def get():
+def list():
     g.connection = connect_db()
     cur = g.connection.execute('SELECT * FROM pessoa')
+    pessoas = cur.fetchall()
+    g.connection.close()
+    return jsonify(pessoas)
+
+
+@afropython.route('/pessoa/<id>', methods=['GET'])
+def get(id):
+    g.connection = connect_db()
+    cur = g.connection.execute('SELECT * FROM pessoa WHERE id=? ', [id])
     pessoas = cur.fetchall()
     g.connection.close()
     return jsonify(pessoas)
